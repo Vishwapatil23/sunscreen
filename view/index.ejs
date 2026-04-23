@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sunscreen Advisor</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="container">
+
+  <h1>☀️ Sunscreen Advisor</h1>
+
+  <form action="/check" method="POST">
+    <input type="text" name="lat" placeholder="Latitude (e.g. 19.0760)" required>
+    <input type="text" name="lng" placeholder="Longitude (e.g. 72.8777)" required>
+    
+    <button type="submit" onclick="showLoading()">Check UV</button>
+    <button type="button" onclick="getLocation()">📍 Auto Detect</button>
+  </form>
+
+   <% if (data) { %>
+    <div class="result">
+
+      <h2>UV Index: <%= data.uv.toFixed(2) %></h2>
+
+      <div class="uv-bar">
+        <div class="uv-fill" style="width:<%= data.uv * 10 %>%; background:<%= data.color %>;"></div>
+      </div>
+
+      <p>Category: <strong><%= data.category %></strong></p>
+      <p>Ozone: <%= data.ozone %></p>
+
+      <h3 style="color:<%= data.color %>;"><%= data.advice %></h3>
+
+      <p class="time">Checked at: <%= data.time %></p>
+
+    </div>
+  <% } %>
+
+  <% if (error) { %>
+    <p class="error"><%= error %></p>
+  <% } %>
+
+</div>
+
+<script>
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      document.querySelector('[name="lat"]').value = position.coords.latitude;
+      document.querySelector('[name="lng"]').value = position.coords.longitude;
+    });
+  } else {
+    alert("Geolocation not supported");
+  }
+}
+
+// 🔥 Loading Effect
+function showLoading() {
+  const btn = document.querySelector('button[type="submit"]');
+  btn.innerText = "Loading...";
+  btn.style.opacity = "0.7";
+}
+
+// 🔥 Smooth scroll to result
+window.onload = () => {
+  const result = document.querySelector('.result');
+  if (result) {
+    result.scrollIntoView({ behavior: "smooth" });
+  }
+};
+</script>
+
+</body>
+</html>
